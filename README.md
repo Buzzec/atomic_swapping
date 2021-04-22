@@ -5,10 +5,10 @@ This is guaranteed lock-free where atomics will be guaranteed lock-free, however
 All values will be properly dropped.
 
 ```rust
-use atomic_swap::AtomicSwap;
+use atomic_swap::option::AtomicSwapOption;
 
 fn main() {
-  let swap = AtomicSwap::new(Some(100usize));
+  let swap = AtomicSwapOption::new(Some(100usize));
   assert_eq!(swap.clone_inner(), Some(100usize));
   assert_eq!(swap.take(), Some(100usize));
   assert_eq!(swap.take(), None);
