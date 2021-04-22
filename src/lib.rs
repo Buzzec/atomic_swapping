@@ -297,7 +297,7 @@ pub mod test {
         const OPS_PER_THREAD: usize = 1 << 10;
         const NUM_THREADS: usize = 1 << 4;
         let mut rng = thread_rng();
-        for round_num in 0..4 {
+        for _round_num in 0..4 {
             let swap = Arc::new(AtomicSwap::new(ComplexType::generate(&mut rng)));
             let mut threads = Vec::with_capacity(NUM_THREADS);
             for _thread_num in 0..NUM_THREADS {
@@ -328,7 +328,7 @@ pub mod test {
     fn value_test() {
         const NUM_OPS: usize = 1 << 10;
         let mut rng = thread_rng();
-        for round_num in 0..4 {
+        for _round_num in 0..4 {
             let mut last_value = ComplexType::generate(&mut rng);
             let mut swap = AtomicSwap::new(last_value.clone());
             let mut last_op = -1;

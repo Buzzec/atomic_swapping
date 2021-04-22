@@ -578,7 +578,6 @@ mod test {
     use crate::option::AtomicSwapOption;
     use crate::test::ComplexType;
     use rand::{thread_rng, Rng};
-    use std::string::String;
     use std::sync::Arc;
     use std::thread::spawn;
     use std::vec::Vec;
