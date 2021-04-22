@@ -65,7 +65,7 @@ impl<T> AtomicSwap<T> {
     /// let swap = AtomicSwap::from_value(100usize);
     /// assert_eq!(swap.take(), Some(100usize));
     /// ```
-    pub const fn from_value(value: T) -> Self{
+    pub const fn from_value(value: T) -> Self {
         Self {
             state: AtomicUsize::new(AtomicSwapState::Assigned(0).into_usize()),
             data: UnsafeCell::new(MaybeUninit::new(value)),
@@ -77,7 +77,7 @@ impl<T> AtomicSwap<T> {
     /// let swap = AtomicSwap::<usize>::from_none();
     /// assert_eq!(swap.take(), None);
     /// ```
-    pub const fn from_none() -> Self{
+    pub const fn from_none() -> Self {
         Self {
             state: AtomicUsize::new(AtomicSwapState::Unassigned.into_usize()),
             data: UnsafeCell::new(MaybeUninit::uninit()),
@@ -107,7 +107,7 @@ impl<T> AtomicSwap<T> {
     /// assert_eq!(swap.swap_hint(None, spin_hint), Some(200usize));
     /// assert_eq!(swap.swap_hint(None, spin_hint), None);
     /// ```
-    pub fn swap_hint(&self, value: Option<T>, mut spin_loop_hint: impl FnMut()) -> Option<T>{
+    pub fn swap_hint(&self, value: Option<T>, mut spin_loop_hint: impl FnMut()) -> Option<T> {
         let mut state = self.state.load(Ordering::Acquire);
         loop {
             let state_enum = AtomicSwapState::from_usize(state);
@@ -139,7 +139,7 @@ impl<T> AtomicSwap<T> {
                                     #[cfg(debug_assertions)]
                                     unreachable!();
                                     #[cfg(not(debug_assertions))]
-                                        unsafe {
+                                    unsafe {
                                         unreachable_unchecked()
                                     }
                                 }
@@ -190,7 +190,7 @@ impl<T> AtomicSwap<T> {
     /// assert_eq!(swap.take_hint(spin_hint), Some(100usize));
     /// assert_eq!(swap.take_hint(spin_hint), None);
     /// ```
-    pub fn take_hint(&self, mut spin_loop_hint: impl FnMut()) -> Option<T>{
+    pub fn take_hint(&self, mut spin_loop_hint: impl FnMut()) -> Option<T> {
         let mut state = self.state.load(Ordering::Acquire);
         loop {
             match AtomicSwapState::from_usize(state) {
@@ -286,7 +286,7 @@ impl<T> AtomicSwap<T> {
     /// drop(swap);
     /// assert_eq!(3, drop_count.load(Ordering::SeqCst));
     /// ```
-    pub fn set_hint(&self, value: Option<T>, mut spin_loop_hint: impl FnMut()){
+    pub fn set_hint(&self, value: Option<T>, mut spin_loop_hint: impl FnMut()) {
         let mut state = self.state.load(Ordering::Acquire);
         loop {
             let state_enum = AtomicSwapState::from_usize(state);
@@ -361,7 +361,10 @@ impl<T> AtomicSwap<T> {
     /// assert_eq!(swap.clone_inner_hint(spin_hint), None);
     /// assert_eq!(swap.take_hint(spin_hint), None);
     /// ```
-    pub fn clone_inner_hint(&self, mut spin_loop_hint: impl FnMut()) -> Option<T> where T: Clone + Sync{
+    pub fn clone_inner_hint(&self, mut spin_loop_hint: impl FnMut()) -> Option<T>
+    where
+        T: Clone + Sync,
+    {
         let mut state = self.state.load(Ordering::Acquire);
         loop {
             match AtomicSwapState::from_usize(state) {
@@ -400,7 +403,7 @@ impl<T> AtomicSwap<T> {
     /// assert_eq!(swap.take(), None);
     /// ```
     #[inline]
-    pub fn contains_value(&self) -> bool{
+    pub fn contains_value(&self) -> bool {
         self.contains_value_hint(spin_loop)
     }
     /// Returns true if the swap contains a value. Will return `true` if [`Some`], `false` if [`None`], or will spin if being assigned by other thread.
@@ -414,8 +417,8 @@ impl<T> AtomicSwap<T> {
     /// assert!(!swap.contains_value_hint(spin_hint));
     /// assert_eq!(swap.take_hint(spin_hint), None);
     /// ```
-    pub fn contains_value_hint(&self, mut spin_loop_hint: impl FnMut()) -> bool{
-        loop{
+    pub fn contains_value_hint(&self, mut spin_loop_hint: impl FnMut()) -> bool {
+        loop {
             match AtomicSwapState::from_usize(self.state.load(Ordering::Acquire)) {
                 AtomicSwapState::Unassigned => return false,
                 AtomicSwapState::Assigning => spin_loop_hint(),
@@ -433,15 +436,16 @@ impl<T> AtomicSwap<T> {
     /// assert_eq!(swap.take(), Some(200usize));
     /// assert_eq!(swap.get_mut(), None);
     /// ```
-    pub fn get_mut(&mut self) -> Option<&mut T>{
+    pub fn get_mut(&mut self) -> Option<&mut T> {
         match AtomicSwapState::from_usize(self.state.load(Ordering::Acquire)) {
             AtomicSwapState::Unassigned => None,
             // Safe because MaybeUninit<T> is transparent to T
-            AtomicSwapState::Assigned(0) => Some(unsafe{ &mut *(self.data.get() as *mut T) }),
-            AtomicSwapState::Assigning | AtomicSwapState::Assigned(_)=> {
+            AtomicSwapState::Assigned(0) => Some(unsafe { &mut *(self.data.get() as *mut T) }),
+            AtomicSwapState::Assigning | AtomicSwapState::Assigned(_) => {
                 #[cfg(debug_assertions)]
                 unreachable!("We should have exclusive access and therefore nothing should be assigning/reading");
-                #[cfg(not(debug_assertions))] unsafe {
+                #[cfg(not(debug_assertions))]
+                unsafe {
                     unreachable_unchecked()
                 }
             }
@@ -458,8 +462,8 @@ impl<T> AtomicSwap<T> {
     /// assert_eq!(swap.take(), Some(200usize));
     /// ```
     #[inline]
-    pub fn get_mut_or(&mut self, value: T) -> &mut T{
-        self.get_mut_or_else(||value)
+    pub fn get_mut_or(&mut self, value: T) -> &mut T {
+        self.get_mut_or_else(|| value)
     }
     /// Gets a mutable reference to the current value if contains a value or fills with `value()` then returns mutable reference to that.
     /// ```
@@ -470,24 +474,25 @@ impl<T> AtomicSwap<T> {
     /// *swap.get_mut_or_else(||400usize) = 200usize;
     /// assert_eq!(swap.take(), Some(200usize));
     /// ```
-    pub fn get_mut_or_else(&mut self, value: impl FnOnce() -> T) -> &mut T{
+    pub fn get_mut_or_else(&mut self, value: impl FnOnce() -> T) -> &mut T {
         match AtomicSwapState::from_usize(self.state.load(Ordering::Acquire)) {
             AtomicSwapState::Unassigned => {
                 *self.data.get_mut() = MaybeUninit::new(value());
-                self.state.store(AtomicSwapState::Assigned(0).into_usize(), Ordering::Release);
-            },
-            AtomicSwapState::Assigned(0) => {},
-            AtomicSwapState::Assigning | AtomicSwapState::Assigned(_)=> {
+                self.state
+                    .store(AtomicSwapState::Assigned(0).into_usize(), Ordering::Release);
+            }
+            AtomicSwapState::Assigned(0) => {}
+            AtomicSwapState::Assigning | AtomicSwapState::Assigned(_) => {
                 #[cfg(debug_assertions)]
                 unreachable!("We should have exclusive access and therefore nothing should be assigning/reading");
                 #[cfg(not(debug_assertions))]
-                    unsafe {
+                unsafe {
                     unreachable_unchecked()
                 }
             }
         }
         // Safe because MaybeUninit<T> is transparent to T
-        unsafe{ &mut *(self.data.get() as *mut T) }
+        unsafe { &mut *(self.data.get() as *mut T) }
     }
     /// Gets a mutable reference to the current value if contains a value or fills with [`Default::default`] then returns mutable reference to that.
     /// Alias to [`AtomicSwap::get_mut_or_else`]`(T::default)`
@@ -500,7 +505,10 @@ impl<T> AtomicSwap<T> {
     /// assert_eq!(swap.take(), Some(200usize));
     /// ```
     #[inline]
-    pub fn get_mut_default(&mut self) -> &mut T where T: Default{
+    pub fn get_mut_default(&mut self) -> &mut T
+    where
+        T: Default,
+    {
         self.get_mut_or_else(T::default)
     }
 }
@@ -511,17 +519,17 @@ impl<T> Drop for AtomicSwap<T> {
             AtomicSwapState::Assigning => {
                 #[cfg(debug_assertions)]
                 unreachable!("Should not have dropped while assigning!");
-                #[cfg(not(debug_assertions))] unsafe {
+                #[cfg(not(debug_assertions))]
+                unsafe {
                     unreachable_unchecked()
                 }
             }
-            AtomicSwapState::Assigned(0) =>{
-                unsafe { drop(self.data.get().read().assume_init()) }
-            }
+            AtomicSwapState::Assigned(0) => unsafe { drop(self.data.get().read().assume_init()) },
             AtomicSwapState::Assigned(_) => {
                 #[cfg(debug_assertions)]
                 unreachable!("Should not drop while has readers!");
-                #[cfg(not(debug_assertions))] unsafe {
+                #[cfg(not(debug_assertions))]
+                unsafe {
                     unreachable_unchecked()
                 }
             }
@@ -530,7 +538,7 @@ impl<T> Drop for AtomicSwap<T> {
 }
 impl<T> EnsureSend for AtomicSwap<T> where T: Send {}
 unsafe impl<T> Sync for AtomicSwap<T> where T: Send {}
-impl<T> Default for AtomicSwap<T>{
+impl<T> Default for AtomicSwap<T> {
     #[inline]
     fn default() -> Self {
         Self::from_none()
@@ -570,11 +578,11 @@ impl AtomicSwapState {
 #[cfg(test)]
 mod test {
     use crate::AtomicSwap;
-    use std::string::String;
-    use std::vec::Vec;
     use rand::{thread_rng, Rng};
+    use std::string::String;
     use std::sync::Arc;
     use std::thread::spawn;
+    use std::vec::Vec;
 
     #[derive(Default, Debug, Eq, PartialEq, Clone)]
     struct ComplexType {
@@ -668,7 +676,12 @@ mod test {
                 match operation {
                     0 => {
                         let new_value = ComplexType::generate_option(&mut rng);
-                        assert_eq!(last_value, swap.swap(new_value.clone()), "Last op: {}", last_op);
+                        assert_eq!(
+                            last_value,
+                            swap.swap(new_value.clone()),
+                            "Last op: {}",
+                            last_op
+                        );
                         last_value = new_value;
                     }
                     1 => {
@@ -685,7 +698,7 @@ mod test {
                     4 => {
                         let swap_ref = swap.get_mut();
                         assert_eq!(swap_ref, last_value.as_mut(), "Last op: {}", last_op);
-                        if let Some(swap_ref) = swap_ref{
+                        if let Some(swap_ref) = swap_ref {
                             *swap_ref = ComplexType::generate(&mut rng);
                             last_value = Some(swap_ref.clone());
                         }
@@ -693,13 +706,23 @@ mod test {
                     5 => {
                         let possible_value = ComplexType::generate(&mut rng);
                         let swap_ref = swap.get_mut_or(possible_value.clone());
-                        assert_eq!(swap_ref, &mut last_value.unwrap_or_else(||possible_value.clone()), "Last op: {}", last_op);
+                        assert_eq!(
+                            swap_ref,
+                            &mut last_value.unwrap_or_else(|| possible_value.clone()),
+                            "Last op: {}",
+                            last_op
+                        );
                         *swap_ref = possible_value.clone();
                         last_value = Some(possible_value);
                     }
                     6 => {
                         let swap_ref = swap.get_mut_default();
-                        assert_eq!(swap_ref, &mut last_value.unwrap_or_default(), "Last op: {}", last_op);
+                        assert_eq!(
+                            swap_ref,
+                            &mut last_value.unwrap_or_default(),
+                            "Last op: {}",
+                            last_op
+                        );
                         *swap_ref = ComplexType::generate(&mut rng);
                         last_value = Some(swap_ref.clone());
                     }
