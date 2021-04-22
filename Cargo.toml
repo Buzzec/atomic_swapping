@@ -1,0 +1,28 @@
+[package]
+name = "atomic_swap"
+version = "0.1.0"
+authors = ["buzzec <buzzec@buzzec.net>"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+description = "An arbitrary type atomic storage with swap operations"
+homepage = "https://github.com/Buzzec/atomic_swap"
+repository = "https://github.com/Buzzec/atomic_swap"
+readme = "README.md"
+categories = ["data-structures"]
+keywords = ["atomic"]
+exclude = [
+    ".idea/*",
+]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+[dev-dependencies]
+rand = "0.8.3"
+
+[features]
+default = []
+# Always uses unreachable! macro instead of ureachable_unchecked().
+# Mainly for if you use unsafe logic around this.
+never_unchecked = []
