@@ -1,2 +1,2 @@
-# atomic_swap v0.1.0
+# atomic_swapping v0.1.0
 - Initial Version!

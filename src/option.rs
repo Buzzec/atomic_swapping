@@ -1,6 +1,6 @@
 //! A concurrent data structure that allows for [`AtomicSwapOption::swap`], [`AtomicSwapOption::take`], [`AtomicSwapOption::set`], and [`AtomicSwapOption::clone_inner`] operations to be run on any type `T`.
 //! ```
-//! use atomic_swap::option::AtomicSwapOption;
+//! use atomic_swapping::option::AtomicSwapOption;
 //!
 //! let swap = AtomicSwapOption::new(Some(100usize));
 //! assert_eq!(swap.clone_inner(), Some(100usize));
@@ -24,7 +24,7 @@ use core::sync::atomic::{AtomicUsize, Ordering};
 /// Allows shared access to `T` by only swap related operations. Acts like it stores an [`Option<T>`].
 /// This is more efficient than an [`AtomicSwap<Option<T>>`](crate::AtomicSwap) and more methods.
 /// ```
-/// use atomic_swap::option::AtomicSwapOption;
+/// use atomic_swapping::option::AtomicSwapOption;
 ///
 /// let swap = AtomicSwapOption::new(Some(100usize));
 /// assert_eq!(swap.clone_inner(), Some(100usize));
@@ -44,7 +44,7 @@ impl<T> AtomicSwapOption<T> {
     /// Creates a new [`AtomicSwapOption`] from an optional value.
     /// If `const` is needed then look to [`AtomicSwapOption::from_value`] or [`AtomicSwapOption::from_none`].
     /// ```
-    /// # use atomic_swap::option::AtomicSwapOption;
+    /// # use atomic_swapping::option::AtomicSwapOption;
     /// let some_swap = AtomicSwapOption::new(Some(100usize));
     /// assert_eq!(some_swap.take(), Some(100usize));
     ///
@@ -59,7 +59,7 @@ impl<T> AtomicSwapOption<T> {
     }
     /// Creates a new [`AtomicSwapOption`] from a value, assigning [`Some`] to the swap.
     /// ```
-    /// # use atomic_swap::option::AtomicSwapOption;
+    /// # use atomic_swapping::option::AtomicSwapOption;
     /// let swap = AtomicSwapOption::from_value(100usize);
     /// assert_eq!(swap.take(), Some(100usize));
     /// ```
@@ -71,7 +71,7 @@ impl<T> AtomicSwapOption<T> {
     }
     /// Creates a new [`AtomicSwapOption`] with [`None`] assigned.
     /// ```
-    /// # use atomic_swap::option::AtomicSwapOption;
+    /// # use atomic_swapping::option::AtomicSwapOption;
     /// let swap = AtomicSwapOption::<usize>::from_none();
     /// assert_eq!(swap.take(), None);
     /// ```
@@ -85,7 +85,7 @@ impl<T> AtomicSwapOption<T> {
     /// Swaps the current value in the swap with `value`, returning the currently contained value.
     /// Same as [`AtomicSwapOption::swap_hint`] with [`spin_loop`] as `spin_loop_hint`.
     /// ```
-    /// # use atomic_swap::option::AtomicSwapOption;
+    /// # use atomic_swapping::option::AtomicSwapOption;
     /// let swap = AtomicSwapOption::from_value(100usize);
     /// assert_eq!(swap.swap(Some(200usize)), Some(100usize));
     /// assert_eq!(swap.swap(None), Some(200usize));
@@ -98,7 +98,7 @@ impl<T> AtomicSwapOption<T> {
     /// Swaps the current value in the swap with `value`, returning the currently contained value.
     /// Same as [`AtomicSwapOption::swap`] but with a custom spin loop hint function.
     /// ```
-    /// # use atomic_swap::option::AtomicSwapOption;
+    /// # use atomic_swapping::option::AtomicSwapOption;
     /// let swap = AtomicSwapOption::from_value(100usize);
     /// let spin_hint = ||println!("I'm spinning! Probably should yield here.");
     /// assert_eq!(swap.swap_hint(Some(200usize), spin_hint), Some(100usize));
@@ -170,7 +170,7 @@ impl<T> AtomicSwapOption<T> {
     /// Takes the current value and returns it leaving [`None`] in its place.
     /// Same as [`AtomicSwapOption::take_hint`] with [`spin_loop`] as `spin_loop_hint`.
     /// ```
-    /// # use atomic_swap::option::AtomicSwapOption;
+    /// # use atomic_swapping::option::AtomicSwapOption;
     /// let swap = AtomicSwapOption::from_value(100usize);
     /// assert_eq!(swap.take(), Some(100usize));
     /// assert_eq!(swap.take(), None);
@@ -182,7 +182,7 @@ impl<T> AtomicSwapOption<T> {
     /// Takes the current value and returns it leaving [`None`] in its place.
     /// Same as [`AtomicSwapOption::take`] but with a custom spin loop hint function.
     /// ```
-    /// # use atomic_swap::option::AtomicSwapOption;
+    /// # use atomic_swapping::option::AtomicSwapOption;
     /// let swap = AtomicSwapOption::from_value(100usize);
     /// let spin_hint = ||println!("I'm spinning! Probably should yield here.");
     /// assert_eq!(swap.take_hint(spin_hint), Some(100usize));
@@ -224,7 +224,7 @@ impl<T> AtomicSwapOption<T> {
     /// Sets the current value in the swap to `value`, dropping the held value if contained.
     /// Same as [`AtomicSwapOption::set_hint`] with [`spin_loop`] as `spin_loop_hint`.
     /// ```
-    /// # use atomic_swap::option::AtomicSwapOption;
+    /// # use atomic_swapping::option::AtomicSwapOption;
     /// # use std::sync::atomic::{AtomicUsize, Ordering};
     /// # use std::sync::Arc;
     /// # struct DropCount<T>(Arc<AtomicUsize>, T);
@@ -257,7 +257,7 @@ impl<T> AtomicSwapOption<T> {
     /// Sets the current value in the swap to `value`, dropping the held value if contained.
     /// Same as [`AtomicSwapOption::set`] but with a custom spin loop hint function.
     /// ```
-    /// # use atomic_swap::option::AtomicSwapOption;
+    /// # use atomic_swapping::option::AtomicSwapOption;
     /// # use std::sync::atomic::{AtomicUsize, Ordering};
     /// # use std::sync::Arc;
     /// # struct DropCount<T>(Arc<AtomicUsize>, T);
@@ -334,7 +334,7 @@ impl<T> AtomicSwapOption<T> {
     /// Clones the contained value if [`Some`] and returns it. `T` must be [`Clone`] and [`Sync`] because multiple threads could clone this simultaneously.
     /// Same as [`AtomicSwapOption::clone_inner_hint`] with [`spin_loop`] as `spin_loop_hint`.
     /// ```
-    /// # use atomic_swap::option::AtomicSwapOption;
+    /// # use atomic_swapping::option::AtomicSwapOption;
     /// let swap = AtomicSwapOption::from_value(100usize);
     /// assert_eq!(swap.clone_inner(), Some(100usize));
     /// assert_eq!(swap.take(), Some(100usize));
@@ -351,7 +351,7 @@ impl<T> AtomicSwapOption<T> {
     /// Clones the contained value if [`Some`] and returns it. `T` must be [`Clone`] and [`Sync`] because multiple threads could clone this simultaneously.
     /// Same as [`AtomicSwapOption::clone_inner`] but with a custom spin loop hint function.
     /// ```
-    /// # use atomic_swap::option::AtomicSwapOption;
+    /// # use atomic_swapping::option::AtomicSwapOption;
     /// let swap = AtomicSwapOption::from_value(100usize);
     /// let spin_hint = ||println!("I'm spinning! Probably should yield here.");
     /// assert_eq!(swap.clone_inner_hint(spin_hint), Some(100usize));
@@ -393,7 +393,7 @@ impl<T> AtomicSwapOption<T> {
     /// Returns true if the swap contains a value. Will return `true` if [`Some`], `false` if [`None`], or will spin if being assigned by other thread.
     /// Same as [`AtomicSwapOption::contains_value_hint`] with [`spin_loop`] as `spin_loop_hint`.
     /// ```
-    /// # use atomic_swap::option::AtomicSwapOption;
+    /// # use atomic_swapping::option::AtomicSwapOption;
     /// let swap = AtomicSwapOption::from_value(100usize);
     /// assert!(swap.contains_value());
     /// assert_eq!(swap.take(), Some(100usize));
@@ -407,7 +407,7 @@ impl<T> AtomicSwapOption<T> {
     /// Returns true if the swap contains a value. Will return `true` if [`Some`], `false` if [`None`], or will spin if being assigned by other thread.
     /// Same as [`AtomicSwapOption::contains_value`] but with a custom spin loop hint function.
     /// ```
-    /// # use atomic_swap::option::AtomicSwapOption;
+    /// # use atomic_swapping::option::AtomicSwapOption;
     /// let swap = AtomicSwapOption::from_value(100usize);
     /// let spin_hint = ||println!("I'm spinning! Probably should yield here.");
     /// assert!(swap.contains_value_hint(spin_hint));
@@ -427,7 +427,7 @@ impl<T> AtomicSwapOption<T> {
 
     /// Gets the internal value exclusively if contains a value. Use [`AtomicSwapOption::get_mut_or`], [`AtomicSwapOption::get_mut_or_else`], or [`AtomicSwapOption::get_mut_default`] if wanting to guarantee a value is held.
     /// ```
-    /// # use atomic_swap::option::AtomicSwapOption;
+    /// # use atomic_swapping::option::AtomicSwapOption;
     /// let mut swap = AtomicSwapOption::from_value(100);
     /// assert_eq!(swap.get_mut(), Some(&mut 100usize));
     /// *swap.get_mut().unwrap() = 200usize;
@@ -452,7 +452,7 @@ impl<T> AtomicSwapOption<T> {
     /// Gets a mutable reference to the current value if contains a value or fills with `value` then returns mutable reference to that.
     /// Alias to [`AtomicSwapOption::get_mut_or_else`]`(||value)`
     /// ```
-    /// # use atomic_swap::option::AtomicSwapOption;
+    /// # use atomic_swapping::option::AtomicSwapOption;
     /// let mut swap = AtomicSwapOption::from_none();
     /// assert_eq!(swap.get_mut_or(100usize), &mut 100usize);
     /// assert_eq!(swap.get_mut_or(300usize), &mut 100usize);
@@ -465,7 +465,7 @@ impl<T> AtomicSwapOption<T> {
     }
     /// Gets a mutable reference to the current value if contains a value or fills with `value()` then returns mutable reference to that.
     /// ```
-    /// # use atomic_swap::option::AtomicSwapOption;
+    /// # use atomic_swapping::option::AtomicSwapOption;
     /// let mut swap = AtomicSwapOption::from_none();
     /// assert_eq!(swap.get_mut_or_else(||100usize), &mut 100usize);
     /// assert_eq!(swap.get_mut_or_else(||300usize), &mut 100usize);
@@ -495,7 +495,7 @@ impl<T> AtomicSwapOption<T> {
     /// Gets a mutable reference to the current value if contains a value or fills with [`Default::default`] then returns mutable reference to that.
     /// Alias to [`AtomicSwapOption::get_mut_or_else`]`(T::default)`
     /// ```
-    /// # use atomic_swap::option::AtomicSwapOption;
+    /// # use atomic_swapping::option::AtomicSwapOption;
     /// let mut swap = AtomicSwapOption::from_none();
     /// assert_eq!(swap.get_mut_default(), &mut usize::default());
     /// *swap.get_mut_or_else(||400usize) = 200usize;

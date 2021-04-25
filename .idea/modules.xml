@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/atomic_swap.iml" filepath="$PROJECT_DIR$/.idea/atomic_swap.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/atomic_swapping.iml" filepath="$PROJECT_DIR$/.idea/atomic_swapping.iml" />
     </modules>
   </component>
 </project>

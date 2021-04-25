@@ -1,11 +1,11 @@
-# atomic_swap
+# atomic_swapping
 An arbitrary type atomic storage with swap operations.
 
 This is guaranteed lock-free where atomics will be guaranteed lock-free, however it is not guaranteed wait free. Some operations may spin for a short time.
 All values will be properly dropped.
 
 ```rust
-use atomic_swap::option::AtomicSwapOption;
+use atomic_swapping::option::AtomicSwapOption;
 
 fn main() {
   let swap = AtomicSwapOption::new(Some(100usize));

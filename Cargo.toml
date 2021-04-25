@@ -1,12 +1,12 @@
 [package]
-name = "atomic_swap"
+name = "atomic_swapping"
 version = "0.1.0"
 authors = ["buzzec <buzzec@buzzec.net>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
 description = "An arbitrary type atomic storage with swap operations"
-homepage = "https://github.com/Buzzec/atomic_swap"
-repository = "https://github.com/Buzzec/atomic_swap"
+homepage = "https://github.com/Buzzec/atomic_swapping"
+repository = "https://github.com/Buzzec/atomic_swapping"
 readme = "README.md"
 categories = ["data-structures"]
 keywords = ["atomic"]

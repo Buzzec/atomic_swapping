@@ -1,6 +1,6 @@
 //! A concurrent data structure that allows for [`AtomicSwap::swap`] operations to be run on any type `T`.
 //! ```
-//! use atomic_swap::AtomicSwap;
+//! use atomic_swapping::AtomicSwap;
 //!
 //! let swap = AtomicSwap::new(100usize);
 //! assert_eq!(swap.clone_inner(), 100usize);
@@ -23,7 +23,7 @@ use core::sync::atomic::{AtomicUsize, Ordering};
 
 /// Allows shared access to `T` by only swap related operations. Acts like it stores an [`Option<T>`]
 /// ```
-/// use atomic_swap::AtomicSwap;
+/// use atomic_swapping::AtomicSwap;
 ///
 /// let swap = AtomicSwap::new(100usize);
 /// assert_eq!(swap.clone_inner(), 100usize);
@@ -38,7 +38,7 @@ pub struct AtomicSwap<T> {
 impl<T> AtomicSwap<T> {
     /// Creates a new [`AtomicSwap`] from a value.
     /// ```
-    /// # use atomic_swap::AtomicSwap;
+    /// # use atomic_swapping::AtomicSwap;
     /// let some_swap = AtomicSwap::new(100usize);
     /// assert_eq!(some_swap.swap(200usize), 100usize);
     /// ```
@@ -52,7 +52,7 @@ impl<T> AtomicSwap<T> {
     /// Swaps the current value in the swap with `value`, returning the currently contained value.
     /// Same as [`AtomicSwap::swap_hint`] with [`spin_loop`] as `spin_loop_hint`.
     /// ```
-    /// # use atomic_swap::AtomicSwap;
+    /// # use atomic_swapping::AtomicSwap;
     /// let swap = AtomicSwap::new(100usize);
     /// assert_eq!(swap.swap(200usize), 100usize);
     /// assert_eq!(swap.swap(300usize), 200usize);
@@ -64,7 +64,7 @@ impl<T> AtomicSwap<T> {
     /// Swaps the current value in the swap with `value`, returning the currently contained value.
     /// Same as [`AtomicSwap::swap`] but with a custom spin loop hint function.
     /// ```
-    /// # use atomic_swap::AtomicSwap;
+    /// # use atomic_swapping::AtomicSwap;
     /// let swap = AtomicSwap::new(100usize);
     /// let spin_hint = ||println!("I'm spinning! Probably should yield here.");
     /// assert_eq!(swap.swap_hint(200usize, spin_hint), 100usize);
@@ -110,7 +110,7 @@ impl<T> AtomicSwap<T> {
     /// Clones the contained value if [`Some`] and returns it. `T` must be [`Clone`] and [`Sync`] because multiple threads could clone this simultaneously.
     /// Same as [`AtomicSwap::clone_inner_hint`] with [`spin_loop`] as `spin_loop_hint`.
     /// ```
-    /// # use atomic_swap::AtomicSwap;
+    /// # use atomic_swapping::AtomicSwap;
     /// let swap = AtomicSwap::new(100usize);
     /// assert_eq!(swap.clone_inner(), 100usize);
     /// assert_eq!(swap.swap(200usize), 100usize);
@@ -126,7 +126,7 @@ impl<T> AtomicSwap<T> {
     /// Clones the contained value if [`Some`] and returns it. `T` must be [`Clone`] and [`Sync`] because multiple threads could clone this simultaneously.
     /// Same as [`AtomicSwap::clone_inner`] but with a custom spin loop hint function.
     /// ```
-    /// # use atomic_swap::AtomicSwap;
+    /// # use atomic_swapping::AtomicSwap;
     /// let swap = AtomicSwap::new(100usize);
     /// let spin_hint = ||println!("I'm spinning! Probably should yield here.");
     /// assert_eq!(swap.clone_inner_hint(spin_hint), 100usize);
@@ -165,7 +165,7 @@ impl<T> AtomicSwap<T> {
 
     /// Gets the internal value exclusively.
     /// ```
-    /// # use atomic_swap::AtomicSwap;
+    /// # use atomic_swapping::AtomicSwap;
     /// let mut swap = AtomicSwap::new(100);
     /// assert_eq!(swap.get_mut(), &mut 100usize);
     /// *swap.get_mut() = 200usize;
